@@ -73,10 +73,10 @@ class RestoreTrash
 
         $data = $this->sabreService->parse($response);
         array_shift($data);
-        
+
 	    foreach ($data as $value) {
             $remoteUrl = $value['value'][0]['value'];
-	    
+
 	        $fileName = $value['value'][1]['value'][0]['value'][0]['value'];
 	        $originalPath = $value['value'][1]['value'][0]['value'][1]['value'];
 	        $deletionDatetime = new DateTime();
@@ -99,7 +99,7 @@ class RestoreTrash
     private function restoreTrashbinData()
     {
 	    $startDate = new DateTime();
-	    $ignoreURLStart = strlen('/remote.php/dav/trashbin/TobiasSchrull/trash/');
+	    $ignoreURLStart = strlen('/remote.php/dav/trashbin/' . $this->username . '/trash/');
 	    $dataCount = count($this->trashbinData);
 	    $iterations = $dataCount/$this->connections;
 	    for($iteration = 0; $iteration < $iterations; $iteration++){
@@ -133,7 +133,7 @@ class RestoreTrash
 	    		curl_multi_add_handle($multiHandler, $curlHandle);
 	    	}
 	    	echo("\n");
-        
+
             // Run Requests
 	    	do {
 	    	    $status = curl_multi_exec($multiHandler, $active);
@@ -142,11 +142,11 @@ class RestoreTrash
 	    		curl_multi_select($multiHandler);
 	    	    }
 	    	} while ($active && $status == CURLM_OK);
-        
+
             // Close connections
 	    	foreach($curlHandles as $curlHandle)
 	    		curl_multi_remove_handle($multiHandler, $curlHandle);
-        
+
             // ----- Short log:
 	    	if ($status != CURLM_OK) {
 	    		$log = sprintf("ERROR: %s\n",curl_multi_strerror($status));
